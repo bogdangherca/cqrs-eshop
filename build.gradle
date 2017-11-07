@@ -1,0 +1,114 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.8.RELEASE'
+	}
+
+	repositories {
+		maven {
+			url 'http://selenium.crm.orange.intra:8081/artifactory/plugins-release'
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+		maven {
+			url 'http://selenium.crm.orange.intra:8081/artifactory/libs-release'
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+
+		// default virtual repo - this repository contains all local and remote repositories
+		maven {
+			url 'http://selenium.crm.orange.intra:8081/artifactory/repo'
+			credentials {
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+		maven {
+			url "http://plugins.gradle.org/m2/"
+		}
+		mavenLocal()
+	}
+
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+idea {
+	module {
+		inheritOutputDirs = false
+		outputDir = file("$buildDir/classes/main/")
+	}
+}
+
+
+repositories {
+	maven {
+		url 'http://selenium.crm.orange.intra:8081/artifactory/plugins-release'
+		credentials {
+			username = "${artifactory_user}"
+			password = "${artifactory_password}"
+		}
+	}
+	maven {
+		url 'http://selenium.crm.orange.intra:8081/artifactory/libs-release'
+		credentials {
+			username = "${artifactory_user}"
+			password = "${artifactory_password}"
+		}
+	}
+
+	// default virtual repo - this repository contains all local and remote repositories
+	maven {
+		url 'http://selenium.crm.orange.intra:8081/artifactory/repo'
+		credentials {
+			username = "${artifactory_user}"
+			password = "${artifactory_password}"
+		}
+	}
+	maven {
+		url "http://plugins.gradle.org/m2/"
+	}
+	mavenLocal()
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
+
+	compile('org.axonframework:axon-spring-boot-starter:3.0.4')
+	compile('org.axonframework:axon-core:3.0.4')
+	compile('org.axonframework:axon-mongo:3.0.4')
+
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+bootRepackage {
+	mainClass = 'ro.orange.omoney.app.MyEShopApplication'
+}
+
+jar {
+	baseName = 'my-eshop'
+	manifest {
+		attributes 'Implementation-Title': rootProject.name, 'Implementation-Version': version
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.2'
+}
